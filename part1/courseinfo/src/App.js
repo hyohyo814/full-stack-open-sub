@@ -1,4 +1,12 @@
-
+const Content = ...{
+  return (
+    <div>
+      <Part .../>
+      <Part .../>
+      <Part .../>
+    </div>
+  )
+}
 
 const App = () => {
   const course = {
@@ -19,15 +27,7 @@ const App = () => {
     ]
   }
 
-  const Content = ...{
-    return (
-      <div>
-        <Part .../>
-        <Part .../>
-        <Part .../>
-      </div>
-    )
-  }
+  
 
   return (
     <div>
