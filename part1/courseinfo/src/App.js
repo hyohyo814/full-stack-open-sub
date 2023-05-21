@@ -6,7 +6,7 @@ const Content = ...{
       <Part .../>
     </div>
   )
-}
+}   
 
 const App = () => {
   const course = {
