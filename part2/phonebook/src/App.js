@@ -1,18 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import axios from 'axios'
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [showName, setShowName] = useState('')
   const [filterName, setFilterName] = useState([
     { name: '', number: '', id: '' }
   ])
+
+  useEffect(() => {
+    console.log("effect")
+    axios.get("http://localhost:3001/persons").then(response => {
+      console.log("promise fulfilled")
+      setPersons(response.data)
+    })
+  }, [])
 
   const addContact = (event) => {
     event.preventDefault()
@@ -47,10 +54,8 @@ const App = () => {
     //use the size function of Set to compare unique name entries and check for change in size
     //as indicator of a non unique entry
     const check = new Set()
-    console.log(`precheck ${check}`)
     const nameExists = postPerson.some((persons) => check.size === check.add(persons.name).size)
     const numberExists = postPerson.some((persons) => check.size === check.add(persons.number).size)
-    console.log(`postcheck ${check}`)
 
     console.log(nameExists)
 
