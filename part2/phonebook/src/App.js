@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import DisplayFilt from './components/DisplayFilt'
+import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 
@@ -101,9 +101,14 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter filterInput={showName} handleFilter={handleNameFilter} />
       <h3>add a new</h3>
-      <PersonForm subForm={addContact} nameVal={newName} numVal={newNumber} handleName={handleNameChange} handleNum={handleNumberChange} />
+      <PersonForm 
+        subForm={addContact} 
+        nameVal={newName} numVal={newNumber} 
+        handleName={handleNameChange} 
+        handleNum={handleNumberChange} 
+      />
       <h3>Numbers</h3>
-      <DisplayFilt key={filterName.id} filter={filterName} init={persons} input={showName} />
+      <Persons key={filterName.id} filter={filterName} init={persons} input={showName} />
     </div>
   )
 }
