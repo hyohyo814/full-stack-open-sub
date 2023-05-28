@@ -1,5 +1,5 @@
 const Filter = ({ filterInput, handleFilter }) => (
-    <div>
+    <div key={filterInput.id}>
       filter shown with: <input
         value={filterInput}
         onChange={handleFilter}
