@@ -16,7 +16,7 @@ const App = () => {
     personService.getAll().then((initDb) => {
       console.log("promise fulfilled");
       setPersons(initDb);
-      console.log(initDb);
+      //console.log(initDb);
     });
   }, []);
 
@@ -54,8 +54,8 @@ const App = () => {
       console.log(`name input: ${newName}`);
       const holdIndex = persons.findIndex((i) => i.name === newName);
       const holdId = persons[holdIndex].id;
-      console.log(holdIndex);
-      console.log(holdId);
+      //console.log(holdIndex);
+      //console.log(holdId);
       window.confirm(
         `${personObj.name} is already added to phonebook, replace the old number with a new one?`
       )
@@ -80,7 +80,7 @@ const App = () => {
     }
 
     personService.create(personObj).then((returnedPer) => {
-      console.log(returnedPer);
+      //console.log(returnedPer);
       console.log(`promise fulfilled`);
       setPersons(persons.concat(returnedPer));
       setNewName("");
@@ -108,12 +108,12 @@ const App = () => {
 
   const handlePersonId = (id) => {
     console.log(`Selected id: ${id}`);
-    console.log(persons);
+    //console.log(persons);
     const delPerson = persons.find((p) => p.id === id);
     const changedPerson = persons.filter((p) => p.id !== id);
-    console.log(changedPerson);
+    //console.log(changedPerson);
     //filter out object with id bound to delete button
-    console.log(delPerson);
+    //console.log(delPerson);
     window.confirm(
       `Are you sure you want to delete ${delPerson.name} from your contacts?`
     )
