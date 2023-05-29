@@ -39,7 +39,6 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    //console.log(newName);
 
     //POST request
     const postPerson = [...persons].concat(personObj);
@@ -50,20 +49,39 @@ const App = () => {
     const numberExists = postPerson.some(
       (persons) => check.size === check.add(persons.number).size
     );
-    
+
     if (nameExists === true) {
-      alert(`${personObj.name} already exists!`);
-      setNewName("");
+      console.log(`name input: ${newName}`);
+      const holdIndex = persons.findIndex((i) => i.name === newName);
+      const holdId = persons[holdIndex].id;
+      console.log(holdIndex);
+      console.log(holdId);
+      window.confirm(
+        `${personObj.name} is already added to phonebook, replace the old number with a new one?`
+      )
+        ? personService.update(holdId, personObj).then((updateNumber) => {
+            //console.log(updateNumber)
+            //copy created to update display of phonebook on change
+            const copy = [...persons];
+            //console.log(copy[holdIndex])
+            copy[holdIndex] = updateNumber;
+            //console.log(copy)
+            setPersons(copy);
+            setNewName("");
+            setNewNumber("");
+          })
+        : setNewName("");
       return;
     }
+
     if (numberExists === true) {
-      alert(`${personObj.number} is already saved!`);
+      window.open(`${personObj.number} is already saved as ${personObj.name}!`);
       return;
     }
 
     personService.create(personObj).then((returnedPer) => {
       console.log(returnedPer);
-      console.log(`promise fulfilled`)
+      console.log(`promise fulfilled`);
       setPersons(persons.concat(returnedPer));
       setNewName("");
       setNewNumber("");
@@ -96,18 +114,15 @@ const App = () => {
     console.log(changedPerson);
     //filter out object with id bound to delete button
     console.log(delPerson);
-    const confirm = window.confirm(
+    window.confirm(
       `Are you sure you want to delete ${delPerson.name} from your contacts?`
-    );
-
-    if (confirm === false) {
-      console.log(`deletion of ${delPerson.name} was canceled`);
-      return;
-    }
-    personService.remove(id).then(() => {
-      console.log("Deletion was successful");
-      setPersons(changedPerson);
-    });
+    )
+      ? personService.remove(id).then(() => {
+          console.log("Deletion was successful");
+          setPersons(changedPerson);
+        })
+      : console.log(`deletion of ${delPerson.name} was canceled`);
+    return;
   };
 
   const handleNumberChange = (event) => {
