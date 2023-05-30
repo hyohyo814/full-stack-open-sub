@@ -3,6 +3,8 @@ import Persons from "./components/Persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([{ name: "", number: "" }]);
@@ -10,6 +12,10 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [showName, setShowName] = useState("");
   const [filterName, setFilterName] = useState([{ name: "", number: "" }]);
+  const [notify, setNotify] = useState({
+    message: null,
+    code: null,
+  });
 
   useEffect(() => {
     console.log("effect");
@@ -18,7 +24,7 @@ const App = () => {
       setPersons(initDb);
       //console.log(initDb);
     });
-  }, []);
+  }, [notify]);
 
   const addContact = (event) => {
     event.preventDefault();
@@ -56,17 +62,22 @@ const App = () => {
       const holdId = persons[holdIndex].id;
       //console.log(holdIndex);
       //console.log(holdId);
+
+      //PUT request
       window.confirm(
         `${personObj.name} is already added to phonebook, replace the old number with a new one?`
       )
         ? personService.update(holdId, personObj).then((updateNumber) => {
-            //console.log(updateNumber)
-            //copy created to update display of phonebook on change
-            const copy = [...persons];
-            //console.log(copy[holdIndex])
-            copy[holdIndex] = updateNumber;
-            //console.log(copy)
-            setPersons(copy);
+            setNotify({
+              message: `Updated ${personObj.name}'s contact info`,
+              code: "success",
+            });
+            setTimeout(() => {
+              setNotify({
+                message: null,
+                code: null,
+              });
+            }, 3000);
             setNewName("");
             setNewNumber("");
           })
@@ -83,6 +94,16 @@ const App = () => {
       //console.log(returnedPer);
       console.log(`promise fulfilled`);
       setPersons(persons.concat(returnedPer));
+      setNotify({
+        message: `Added ${personObj.name}`,
+        code: "success",
+      });
+      setTimeout(() => {
+        setNotify({
+          message: null,
+          code: null,
+        });
+      }, 3000);
       setNewName("");
       setNewNumber("");
     });
@@ -110,18 +131,47 @@ const App = () => {
     console.log(`Selected id: ${id}`);
     //console.log(persons);
     const delPerson = persons.find((p) => p.id === id);
-    const changedPerson = persons.filter((p) => p.id !== id);
-    //console.log(changedPerson);
     //filter out object with id bound to delete button
-    //console.log(delPerson);
     window.confirm(
       `Are you sure you want to delete ${delPerson.name} from your contacts?`
     )
-      ? personService.remove(id).then(() => {
-          console.log("Deletion was successful");
-          setPersons(changedPerson);
-        })
-      : console.log(`deletion of ${delPerson.name} was canceled`);
+      ? personService
+          .remove(id)
+          .then(() => {
+            setNotify({
+              message: `Deleted ${delPerson.name}`,
+              code: "success",
+            });
+            setTimeout(() => {
+              setNotify({
+                message: null,
+                code: null,
+              });
+            }, 3000);
+            console.log("Deletion was successful");
+          })
+          .catch((err) => {
+            setNotify({
+              message: `${delPerson.name} has already been deleted`,
+              code: "error",
+            });
+            setTimeout(() => {
+              setNotify({
+                message: null,
+                code: null,
+              });
+            }, 3000);
+          })
+      : setNotify({
+          message: `Deletion of ${delPerson.name} was canceled`,
+          code: "error",
+        });
+    setTimeout(() => {
+      setNotify({
+        message: null,
+        code: null,
+      });
+    }, 3000);
     return;
   };
 
@@ -133,6 +183,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notify.message} handle={notify.code} />
       <Filter filterInput={showName} handleFilter={handleNameFilter} />
       <h3>add a new</h3>
       <PersonForm
