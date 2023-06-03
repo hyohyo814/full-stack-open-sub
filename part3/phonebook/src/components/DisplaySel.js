@@ -1,6 +1,6 @@
 const DisplaySel = ({ target, del }) => (
   target.map(person => (
-    <p key={Math.random()}>
+    <p key={person.id}>
       {person.name} {person.number}
       <button
         onClick={() => {

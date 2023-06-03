@@ -60,8 +60,8 @@ const App = () => {
       console.log(`name input: ${newName}`);
       const holdIndex = persons.findIndex((i) => i.name === newName);
       const holdId = persons[holdIndex].id;
-      //console.log(holdIndex);
-      //console.log(holdId);
+      console.log(holdIndex);
+      console.log(holdId);
 
       //PUT request
       window.confirm(
