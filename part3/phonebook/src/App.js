@@ -17,6 +17,15 @@ const App = () => {
     code: null,
   });
 
+  const resetMsg = () => {
+    setTimeout(() => {
+      setNotify({
+        message: null,
+        code: null,
+      });
+    }, 3000);
+  };
+
   useEffect(() => {
     console.log("effect");
     personService.getAll().then((initDb) => {
@@ -60,27 +69,27 @@ const App = () => {
       console.log(`name input: ${newName}`);
       const holdIndex = persons.findIndex((i) => i.name === newName);
       const holdId = persons[holdIndex].id;
-      console.log(holdIndex);
-      console.log(holdId);
+      //console.log(holdIndex);
+      //console.log(holdId);
 
       //PUT request
       window.confirm(
         `${personObj.name} is already added to phonebook, replace the old number with a new one?`
       )
-        ? personService.update(holdId, personObj).then((updateNumber) => {
-            setNotify({
-              message: `Updated ${personObj.name}'s contact info`,
-              code: "success",
-            });
-            setTimeout(() => {
+        ? personService
+            .update(holdId, personObj)
+            .then((updateNumber) => {
               setNotify({
-                message: null,
-                code: null,
+                message: `Updated ${personObj.name}'s contact info`,
+                code: "success",
               });
-            }, 3000);
-            setNewName("");
-            setNewNumber("");
-          })
+              resetMsg();
+              setNewName("");
+              setNewNumber("");
+            })
+            .catch((err) => {
+              console.log(err.response.data.error);
+            })
         : setNewName("");
       return;
     }
@@ -90,23 +99,28 @@ const App = () => {
       return;
     }
 
-    personService.create(personObj).then((returnedPer) => {
-      //console.log(returnedPer);
-      console.log(`promise fulfilled`);
-      setPersons(persons.concat(returnedPer));
-      setNotify({
-        message: `Added ${personObj.name}`,
-        code: "success",
-      });
-      setTimeout(() => {
+    personService
+      .create(personObj)
+      .then((returnedPer) => {
+        //console.log(returnedPer);
+        console.log(`promise fulfilled`);
+        setPersons(persons.concat(returnedPer));
         setNotify({
-          message: null,
-          code: null,
+          message: `Added ${personObj.name}`,
+          code: "success",
         });
-      }, 3000);
-      setNewName("");
-      setNewNumber("");
-    });
+        resetMsg()
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((err) => {
+        console.log(err.response.data.error);
+        setNotify({
+          message: err.response.data.error,
+          code: "error",
+        });
+        resetMsg();
+      });
   };
 
   const handleNameChange = (event) => {
@@ -137,41 +151,26 @@ const App = () => {
     )
       ? personService
           .remove(id)
-          .then(() => {
+          .then(delTarget => {
             setNotify({
               message: `Deleted ${delPerson.name}`,
               code: "success",
             });
-            setTimeout(() => {
-              setNotify({
-                message: null,
-                code: null,
-              });
-            }, 3000);
+            resetMsg();
             console.log("Deletion was successful");
           })
           .catch((err) => {
             setNotify({
-              message: `${delPerson.name} has already been deleted`,
+              message: err.response.data.error,
               code: "error",
             });
-            setTimeout(() => {
-              setNotify({
-                message: null,
-                code: null,
-              });
-            }, 3000);
+            resetMsg();
           })
       : setNotify({
           message: `Deletion of ${delPerson.name} was canceled`,
           code: "error",
         });
-    setTimeout(() => {
-      setNotify({
-        message: null,
-        code: null,
-      });
-    }, 3000);
+    resetMsg();
     return;
   };
 
