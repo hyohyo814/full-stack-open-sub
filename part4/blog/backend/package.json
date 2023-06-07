@@ -1,15 +1,8 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "mongoose": "^7.2.2",
-    "nodemon": "^2.0.22"
-  },
   "name": "backend",
   "version": "1.0.0",
   "description": "backend for blog list",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -17,5 +10,15 @@
     "lint": "eslint ."
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.2.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.1.4",
+    "nodemon": "^2.0.22"
+  }
 }
