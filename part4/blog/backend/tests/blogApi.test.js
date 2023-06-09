@@ -42,7 +42,6 @@ describe('API init tests', () => {
     const identifiers = res.body.map((v) => v.id)
     expect(identifiers).toBeDefined()
   })
-
 })
 
 ////////////////////////////////
@@ -107,10 +106,7 @@ describe('API POST and content confirmation', () => {
       __v: 0
     }
 
-    await api
-      .post('/api/blogs')
-      .send(noUrl)
-      .expect(400)
+    await api.post('/api/blogs').send(noUrl).expect(400)
   })
 
   test('Check required field: title', async () => {
@@ -121,13 +117,8 @@ describe('API POST and content confirmation', () => {
       __v: 0
     }
 
-    await api
-      .post('/api/blogs')
-      .send(noTitle)
-      .expect(400)
+    await api.post('/api/blogs').send(noTitle).expect(400)
   })
-
-
 })
 
 afterAll(async () => {
