@@ -121,6 +121,48 @@ describe('API POST and content confirmation', () => {
   })
 })
 
+describe('API testing for individual items in blogs', () => {
+  test('Deletion of a blog', async () => {
+    const initSize  = helper.initBlogs.length
+    const lastIndex = helper.initBlogs.length - 1
+    const id = helper.initBlogs[lastIndex]._id
+
+    await api
+      .delete(`/api/blogs/${id}`)
+      .expect(204)
+    
+    const res = await api.get('/api/blogs')
+    expect(res.body).toHaveLength(initSize - 1)
+  })
+
+  test('Update of blog likes', async () => {
+    const initSize = helper.initBlogs.length
+
+    const updateBlog = {
+      _id: '5a422aa71b54a676234d17f8',
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 8,
+      __v: 0
+    }
+
+    await api
+      .put(`/api/blogs/${updateBlog._id}`)
+      .send(updateBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const res  = await api.get('/api/blogs')
+    const idMap = res.body.map(k => k.id)
+    const index = _.indexOf(idMap, updateBlog._id)
+    const contents = res.body.map(v => v.likes)
+
+    expect(contents[index]).toBe(updateBlog.likes)
+    expect(res.body).toHaveLength(initSize)
+  })
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

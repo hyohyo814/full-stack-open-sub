@@ -18,7 +18,7 @@ blogsRouter.get('/:id', async (req, res) => {
 
 blogsRouter.post('/', async (req, res) => {
   const blog = new Blog(req.body)
-  
+
   if (!blog.title || !blog.url) {
     res.status(400).end()
   } else {
@@ -27,8 +27,21 @@ blogsRouter.post('/', async (req, res) => {
   }
 })
 
+blogsRouter.put('/:id', async (req, res) => {
+  const blog = new Blog(req.body)
+
+  if (!blog.title || !blog.url) {
+    res.status(400).end()
+  } else {
+    const update = await Blog.findByIdAndUpdate(req.params.id, blog, {
+      new: true
+    })
+    res.status(200).json(update)
+  }
+})
+
 blogsRouter.delete('/:id', async (req, res) => {
-  const removal = await Blog.findByIdAndRemove(req.params.id)
+  await Blog.findByIdAndRemove(req.params.id)
 
   res.status(204).end()
 })
