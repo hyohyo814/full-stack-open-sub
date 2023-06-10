@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const { errorHandler } = require('../utils/middleware')
 const blogsRouter = require('express').Router()
 
@@ -19,10 +20,14 @@ blogsRouter.get('/:id', async (req, res) => {
 blogsRouter.post('/', async (req, res) => {
   const blog = new Blog(req.body)
 
+  const user = await User.findById(blog.userId)
+
   if (!blog.title || !blog.url) {
     res.status(400).end()
   } else {
     const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
     res.status(201).json(savedBlog)
   }
 })
