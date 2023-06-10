@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
+const Blog = require('../models/blog')
 const helper = require('../utils/api_test_helper')
 const app = require('../app')
 const supertest = require('supertest')
@@ -13,7 +14,15 @@ beforeEach(async () => {
   const user = new User({ username: 'root', name: 'admin', passwordHash })
 
   await user.save()
+
+  await Blog.deleteMany({})
+
+  const blogObj = helper.initBlogs.map((v) => new Blog(v))
+  const promiseArr = blogObj.map((blog) => blog.save())
+  await Promise.all(promiseArr)
 })
+
+
 
 describe('User verification', () => {
   test('Verify user data', async () => {
@@ -66,19 +75,21 @@ describe('User verification', () => {
   })
 })
 
+////////////////////////////////
+
 describe('Token based authentication', () => {
+  const userInfo = {
+    username: 'Rouge',
+    name: 'John',
+    password: 'password'
+  }
+
+  const userCreds = {
+    username: userInfo.username,
+    password: userInfo.password
+  }
+
   test('Verify token generation', async () => {
-    const userInfo = {
-      username: 'Rouge',
-      name: 'John',
-      password: 'password'
-    }
-
-    const userCreds = {
-      username: userInfo.username,
-      password: userInfo.password
-    }
-
     await api.post('/api/users').send(userInfo).expect(201)
 
     const login = await api.post('/api/login').send(userCreds)
@@ -87,7 +98,32 @@ describe('Token based authentication', () => {
     expect(login.body.token).toBeDefined()
   })
 
-  
+  test('Allowing posting of notes with valid token', async () => {
+    const newBlog = {
+      title: "Blogtest 3",
+      author: "Ben",
+      url: "https://recBlog.net",
+      likes: 5
+    }
+
+    const init = await api.get('/api/blogs')
+    const initLength = init.body.length
+    
+    await api.post('/api/users').send(userInfo)
+    const login = await api.post('/api/login').send(userCreds)
+    const token = login.body.token
+    
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+
+    const res = await api.get('/api/blogs')
+    expect(res.body.length).toBe(initLength + 1)
+    const titles = res.body.map(t => t.title)
+    expect(titles).toContain(newBlog.title)
+  })
 })
 
 afterAll(async () => {
