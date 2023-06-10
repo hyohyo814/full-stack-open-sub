@@ -4,7 +4,10 @@ const { errorHandler } = require('../utils/middleware')
 const blogsRouter = require('express').Router()
 
 blogsRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})
+    .populate('user', { username: 1, name: 1 })
+
   res.json(blogs)
 })
 
@@ -19,8 +22,11 @@ blogsRouter.get('/:id', async (req, res) => {
 
 blogsRouter.post('/', async (req, res) => {
   const blog = new Blog(req.body)
-
-  const user = await User.findById(blog.userId)
+  console.log(blog)
+  
+  const user = await User.findById(blog.user)
+  console.log(user)
+  
 
   if (!blog.title || !blog.url) {
     res.status(400).end()
