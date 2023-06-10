@@ -64,8 +64,32 @@ describe('User verification', () => {
     const res = await api.get('/api/users')
     expect(res.body).toHaveLength(1)
   })
+})
 
-  afterAll(async () => {
-    await mongoose.connection.close()
+describe('Token based authentication', () => {
+  test('Verify token generation', async () => {
+    const userInfo = {
+      username: 'Rouge',
+      name: 'John',
+      password: 'password'
+    }
+
+    const userCreds = {
+      username: userInfo.username,
+      password: userInfo.password
+    }
+
+    await api.post('/api/users').send(userInfo).expect(201)
+
+    const login = await api.post('/api/login').send(userCreds)
+
+    expect(login.status).toBe(200)
+    expect(login.body.token).toBeDefined()
   })
+
+  
+})
+
+afterAll(async () => {
+  await mongoose.connection.close()
 })
