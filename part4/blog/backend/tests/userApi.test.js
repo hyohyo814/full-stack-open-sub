@@ -22,8 +22,6 @@ beforeEach(async () => {
   await Promise.all(promiseArr)
 })
 
-
-
 describe('User verification', () => {
   test('Verify user data', async () => {
     await api.get('/api/users').expect(200)
@@ -36,9 +34,11 @@ describe('User verification', () => {
       password: 'password'
     }
 
-    const err = await api.post('/api/users').send(impUser)
-    expect(err.status).toBe(400)
-    expect(err.body.error).toContain('User validation failed: username')
+    await api
+      .post('/api/users')
+      .send(impUser)
+      .expect(400)
+      .expect({ error: 'User validation failed: username' })
 
     const res = await api.get('/api/users')
     expect(res.body).toHaveLength(1)
@@ -51,9 +51,11 @@ describe('User verification', () => {
       password: '11'
     }
 
-    const err = await api.post('/api/users').send(impPass)
-    expect(err.status).toBe(400)
-    expect(err.body.error).toContain('Invalid password')
+    await api
+      .post('/api/users')
+      .send(impPass)
+      .expect(400)
+      .expect({ error: 'Invalid password' })
 
     const res = await api.get('/api/users')
     expect(res.body).toHaveLength(1)
@@ -66,9 +68,11 @@ describe('User verification', () => {
       password: ''
     }
 
-    const err = await api.post('/api/users').send(impInp)
-    expect(err.status).toBe(400)
-    expect(err.body.error).toContain('Username and password are required')
+    await api
+      .post('/api/users')
+      .send(impInp)
+      .expect(400)
+      .expect({ error: 'Username and password are required' })
 
     const res = await api.get('/api/users')
     expect(res.body).toHaveLength(1)
@@ -100,19 +104,19 @@ describe('Token based authentication', () => {
 
   test('Allowing posting of notes with valid token', async () => {
     const newBlog = {
-      title: "Blogtest 3",
-      author: "Ben",
-      url: "https://recBlog.net",
+      title: 'Blogtest 3',
+      author: 'Ben',
+      url: 'https://recBlog.net',
       likes: 5
     }
 
     const init = await api.get('/api/blogs')
     const initLength = init.body.length
-    
+
     await api.post('/api/users').send(userInfo)
     const login = await api.post('/api/login').send(userCreds)
     const token = login.body.token
-    
+
     await api
       .post('/api/blogs')
       .send(newBlog)
@@ -121,8 +125,51 @@ describe('Token based authentication', () => {
 
     const res = await api.get('/api/blogs')
     expect(res.body.length).toBe(initLength + 1)
-    const titles = res.body.map(t => t.title)
+    const titles = res.body.map((t) => t.title)
     expect(titles).toContain(newBlog.title)
+  })
+
+  test('Deletion function available only to owner of blog', async () => {
+    const newBlog = {
+      title: 'Blogtest 3',
+      author: 'Ben',
+      url: 'https://recBlog.net',
+      likes: 5
+    }
+
+    const init = await api.get('/api/blogs')
+    const initLength = init.body.length
+
+    await api.post('/api/users').send(userInfo)
+    const login = await api.post('/api/login').send(userCreds)
+    const token = login.body.token
+    const badToken = `${login.body.token}asdasd`
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+
+    const res = await api.get('/api/blogs')
+    const newEntry = res.body[res.body.length - 1]
+    const newEntryId = newEntry.id
+
+    await api
+      .delete(`/api/blogs/${newEntryId}`)
+      .expect(400)
+      .expect({ error: 'jwt must be provided' })
+
+    await api
+      .delete(`/api/blogs/${newEntryId}`)
+      .set('Authorization', `Bearer ${badToken}`)
+      .expect(400)
+      .expect({ error: 'invalid signature' })
+
+    await api
+      .delete(`/api/blogs/${newEntryId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(204)
   })
 })
 
