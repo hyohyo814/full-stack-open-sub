@@ -7,10 +7,12 @@ const unknownEndpoint = (req, res) => {
 const errorHandler = (err, req, res, next) => {
   logger.error(err.message)
 
-  if (err.message === 'CastError') {
+  if (err.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' })
-  } else if (err.message === 'ValidationError') {
-    return res.status(400).send({ error: error.message })
+  } else if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message })
+  } else if (err.name === 'JsonWebTokenError') {
+    return res.status(400).json({ error: err.message })
   }
 
   next(err)
