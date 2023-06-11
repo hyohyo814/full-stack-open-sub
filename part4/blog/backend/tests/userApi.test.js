@@ -143,7 +143,8 @@ describe('Token based authentication', () => {
     await api.post('/api/users').send(userInfo)
     const login = await api.post('/api/login').send(userCreds)
     const token = login.body.token
-    const badToken = `${login.body.token}asdasd`
+    const badToken = `${login.body.token}asd`
+    console.log(token)
 
     await api
       .post('/api/blogs')
@@ -154,6 +155,8 @@ describe('Token based authentication', () => {
     const res = await api.get('/api/blogs')
     const newEntry = res.body[res.body.length - 1]
     const newEntryId = newEntry.id
+    console.log(newEntry)
+    console.log(newEntryId)
 
     await api
       .delete(`/api/blogs/${newEntryId}`)

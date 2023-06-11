@@ -4,14 +4,6 @@ const { errorHandler } = require('../utils/middleware')
 const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = req => {
-  const auth = req.get('authorization')
-  if (auth && auth.startsWith('Bearer ')) {
-    return auth.replace('Bearer ', '')
-  }
-  return null
-}
-
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog
     .find({})
@@ -38,6 +30,8 @@ blogsRouter.post('/', async (req, res) => {
   }
   
   const user = await User.findById(decodedToken.id)
+  blog.user = user.id
+  // console.log(blog)
   
   if (!blog.title || !blog.url) {
     res.status(400).end()
@@ -63,10 +57,25 @@ blogsRouter.put('/:id', async (req, res) => {
 })
 
 blogsRouter.delete('/:id', async (req, res) => {
+  const targetBlog = await Blog.findById(req.params.id)
+  // console.log(targetBlog)
+  const targetUser = await User.findById(targetBlog.user.id)
+  const targetUserId = targetUser.id.toString()
+  // console.log(`target ID ${targetUserId}`)
+
   const decodedToken = jwt.verify(req.token, process.env.SECRET)
-  if (!decodedToken) {
+  if (!decodedToken.id) {
     return res.status(401).json({ error: 'token invalid' })
   }
+
+  const user = await User.findById(decodedToken.id)
+  const userId = user.id.toString()
+
+  // console.log(`user ID ${userId}`)
+  if(userId !== targetUserId) {
+    return res.status(401).json({ error: 'user not authorized to delete this blog'})
+  }
+
   await Blog.findByIdAndRemove(req.params.id)
   res.status(204).end()
 })
