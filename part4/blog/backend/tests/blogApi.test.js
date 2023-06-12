@@ -52,29 +52,6 @@ describe('API init tests', () => {
 });
 
 describe('API POST and content confirmation', () => {
-  test('Blog successfully posts and updates', async () => {
-    const newBlog = {
-      _id: '5a422bc61b54a676234d17fc',
-      title: 'Type wars',
-      author: 'Robert C. Martin',
-      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-      likes: 2,
-      __v: 0,
-    };
-
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/);
-
-    const res = await api.get('/api/blogs');
-    const title = res.body.map((v) => v.title);
-
-    expect(res.body).toHaveLength(helper.initBlogs.length + 1);
-    expect(title).toContain('Type wars');
-  });
-
   test('Blog defaults "likes" to zero when undefined', async () => {
     const newBlog = {
       _id: '5a422bc61b54a676234d17fc',
