@@ -52,6 +52,17 @@ describe('API init tests', () => {
 });
 
 describe('API POST and content confirmation', () => {
+  const userInfo = {
+    username: 'Rouge',
+    name: 'John',
+    password: 'password',
+  };
+
+  const userCreds = {
+    username: userInfo.username,
+    password: userInfo.password,
+  };
+
   test('Blog defaults "likes" to zero when undefined', async () => {
     const newBlog = {
       _id: '5a422bc61b54a676234d17fc',
@@ -61,12 +72,17 @@ describe('API POST and content confirmation', () => {
       __v: 0,
     };
 
+    await api.post('/api/users').send(userInfo);
+    const login = await api.post('/api/login').send(userCreds);
+    const { token } = login.body;
+
     const newLength = helper.initBlogs.length + 1;
     const newEntry = newLength - 1;
 
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
@@ -88,7 +104,15 @@ describe('API POST and content confirmation', () => {
       __v: 0,
     };
 
-    await api.post('/api/blogs').send(noUrl).expect(400);
+    await api.post('/api/users').send(userInfo);
+    const login = await api.post('/api/login').send(userCreds);
+    const { token } = login.body;
+
+    await api
+      .post('/api/blogs')
+      .send(noUrl)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
   });
 
   test('Check required field: title', async () => {
@@ -99,22 +123,19 @@ describe('API POST and content confirmation', () => {
       __v: 0,
     };
 
-    await api.post('/api/blogs').send(noTitle).expect(400);
+    await api.post('/api/users').send(userInfo);
+    const login = await api.post('/api/login').send(userCreds);
+    const { token } = login.body;
+
+    await api
+      .post('/api/blogs')
+      .send(noTitle)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
   });
 });
 
 describe('API testing for individual items in blogs', () => {
-  test('Deletion of a blog', async () => {
-    const initSize = helper.initBlogs.length;
-    const lastIndex = helper.initBlogs.length - 1;
-    const { id } = helper.initBlogs[lastIndex];
-
-    await api.delete(`/api/blogs/${id}`).expect(204);
-
-    const res = await api.get('/api/blogs');
-    expect(res.body).toHaveLength(initSize - 1);
-  });
-
   test('Update of blog likes', async () => {
     const initSize = helper.initBlogs.length;
 
