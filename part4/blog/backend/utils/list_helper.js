@@ -1,71 +1,68 @@
-const Blog = require('../models/blog')
-const blogsRouter = require('express').Router()
-const _ = require('lodash')
+const _ = require('lodash');
 
 const dummy = (blogs) => {
   if (blogs) {
-    return 1
-  } else {
-    return 0
+    return 1;
   }
-}
+  return 0;
+};
 
 const totalLikes = (blogs) => {
-  let sum = 0
+  let sum = 0;
 
-  for (const key in blogs) {
-    sum += blogs[key].likes
-  }
+  _.forEach(blogs, (v, k) => {
+    sum += blogs[k].likes;
+  });
 
-  return sum
-}
+  return sum;
+};
 
 const favoriteBlog = (blogs) => {
-  let fav = []
-  let likeCt = 0
+  let fav = [];
+  let likeCt = 0;
 
-  for (const key in blogs) {
-    if (blogs[key].likes > likeCt) {
-      likeCt = blogs[key].likes
-      fav = blogs[key]
+  _.forEach(blogs, (v, k) => {
+    if (blogs[k].likes > likeCt) {
+      likeCt = blogs[k].likes;
+      fav = blogs[k];
     }
-  }
+  });
 
-  return fav
-}
+  return fav;
+};
 
 const mostBlogs = (blogs) => {
   const groupObj = _(blogs)
     .groupBy('author')
     .map((count, key) => ({
       author: key,
-      blogs: _.size(count)
+      blogs: _.size(count),
     }))
-    .value()
+    .value();
 
-  const maxObj = _.maxBy(groupObj, 'blogs')
+  const maxObj = _.maxBy(groupObj, 'blogs');
 
-  return maxObj
-}
+  return maxObj;
+};
 
 const mostLikes = (blogs) => {
   const groupObj = _(blogs)
     .groupBy('author')
     .map((obj, key) => ({
       author: key,
-      likes: _.sumBy(obj, (o) => o.likes)
+      likes: _.sumBy(obj, (o) => o.likes),
     }))
-    .value()
+    .value();
 
-  const maxObj = _.maxBy(groupObj, 'likes')
+  const maxObj = _.maxBy(groupObj, 'likes');
 
-  return maxObj
-}
+  return maxObj;
+};
 
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostLikes
-}
+  mostLikes,
+};
