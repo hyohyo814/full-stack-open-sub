@@ -126,7 +126,7 @@ describe('Token based authentication', () => {
       .expect(201);
 
     const res = await api.get('/api/blogs');
-    expect(res.body.length).toBe(initLength + 1);
+    expect(res.body).toHaveLength(initLength + 1);
     const titles = res.body.map((t) => t.title);
     expect(titles).toContain(newBlog.title);
   });
