@@ -36,8 +36,11 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
   }
 });
 
-blogsRouter.put('/:id', async (req, res) => {
+blogsRouter.put('/:id', userExtractor, async (req, res) => {
   const blog = new Blog(req.body);
+
+  const { user } = req;
+  blog.user = user.id;
 
   if (!blog.title || !blog.url) {
     res.status(400).end();

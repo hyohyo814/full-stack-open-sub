@@ -4,10 +4,10 @@ const _ = require('lodash');
 const bcrypt = require('bcrypt');
 const app = require('../app');
 const helper = require('../utils/api_test_helper');
-
-const api = supertest(app);
 const Blog = require('../models/blog');
 const User = require('../models/user');
+
+const api = supertest(app);
 
 beforeEach(async () => {
   await User.deleteMany({});
@@ -136,21 +136,53 @@ describe('API POST and content confirmation', () => {
 });
 
 describe('API testing for individual items in blogs', () => {
+  const userInfo = {
+    username: 'Rouge',
+    name: 'John',
+    password: 'password',
+  };
+
+  const userCreds = {
+    username: userInfo.username,
+    password: userInfo.password,
+  };
   test('Update of blog likes', async () => {
     const initSize = helper.initBlogs.length;
 
+    const newBlog = {
+      title: 'Blogtest 3',
+      author: 'Ben',
+      url: 'https://recBlog.net',
+      likes: 5,
+    };
+
+    await api.post('/api/users').send(userInfo);
+    const login = await api.post('/api/login').send(userCreds);
+    const { token } = login.body;
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', `Bearer ${token}`)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const checkpoint = await api.get('/api/blogs');
+    const newId = checkpoint.body[initSize].id;
+    // console.log(newId);
+
     const updateBlog = {
-      _id: '5a422aa71b54a676234d17f8',
-      title: 'Go To Statement Considered Harmful',
-      author: 'Edsger W. Dijkstra',
-      url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      title: 'Blogtest 3',
+      author: 'Ben',
+      url: 'https://recBlog.net',
       likes: 8,
-      __v: 0,
+      id: newId,
     };
 
     await api
-      .put(`/api/blogs/${updateBlog.id}`)
+      .put(`/api/blogs/${newId}`)
       .send(updateBlog)
+      .set('Authorization', `Bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
