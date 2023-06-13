@@ -17,13 +17,13 @@ usersRouter.post('/', async (req, res) => {
   const { username, name, password } = req.body;
 
   if (!(username && password)) {
-    res.status(400).json({
+    return res.status(400).json({
       error: 'Username and password are required',
     });
   }
 
   if (password === undefined || password.length < 3) {
-    res.status(400).json({
+    return res.status(400).json({
       error: 'Invalid password',
     });
   }
@@ -39,7 +39,7 @@ usersRouter.post('/', async (req, res) => {
 
   const savedUser = await user.save();
 
-  res.status(201).json(savedUser);
+  return res.status(201).json(savedUser);
 });
 
 module.exports = usersRouter;
