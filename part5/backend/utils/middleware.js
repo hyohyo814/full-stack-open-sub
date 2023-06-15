@@ -13,15 +13,19 @@ const tokenExtractor = (req, res, next) => {
 };
 
 const userExtractor = async (req, res, next) => {
+  console.log(req.token);
+  if (!req.token) {
+    return res.status(401).json({ error: 'jwt must be provided' });
+  }
   const decodedToken = jwt.verify(req.token, process.env.SECRET);
   // console.log(decodedToken.id);
   if (!decodedToken.id) {
-    res.status(401).json({ error: 'token invalid' });
+    return res.status(401).json({ error: 'token invalid' });
   }
 
   const target = await User.findById(decodedToken.id);
   req.user = target;
-  next();
+  return next();
 };
 
 const unknownEndpoint = (req, res) => {
