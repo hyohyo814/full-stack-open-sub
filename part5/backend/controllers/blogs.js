@@ -58,20 +58,19 @@ blogsRouter.put('/:id', tokenExtractor, userExtractor, async (req, res) => {
 });
 
 blogsRouter.delete('/:id', tokenExtractor, userExtractor, async (req, res) => {
-  //const targetBlog = await Blog.findById(req.params.id);
+  const targetBlog = await Blog.findById(req.params.id);
   // console.log(targetBlog)
-  //const targetUser = await User.findById(targetBlog.user.id);
-  //const targetUserId = targetUser.id.toString();
+  const targetUser = await User.findById(targetBlog.user.id);
+  const targetUserId = targetUser.id.toString();
   // console.log(`target ID ${targetUserId}`)
 
   const { user } = req;
   const userId = user.id.toString();
 
   // console.log(`user ID ${userId}`)
-  /*
   if (userId !== targetUserId) {
     return res.status(401).json({ error: 'user not authorized to delete this blog' });
-  } */
+  }
 
   await Blog.findByIdAndRemove(req.params.id);
   return res.status(204).end();
