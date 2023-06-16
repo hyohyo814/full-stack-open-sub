@@ -1,7 +1,7 @@
 const blogsRouter = require('express').Router();
 const User = require('../models/user');
 const Blog = require('../models/blog');
-const { tokenExtractor, userExtractor } = require('../utils/middleware');
+const { userExtractor } = require('../utils/middleware');
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 });
@@ -18,7 +18,7 @@ blogsRouter.get('/:id', async (req, res) => {
   }
 });
 
-blogsRouter.post('/', tokenExtractor, userExtractor, async (req, res) => {
+blogsRouter.post('/', userExtractor, async (req, res) => {
   const blog = new Blog(req.body);
 
   // console.log(req.user)
@@ -36,7 +36,7 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (req, res) => {
   }
 });
 
-blogsRouter.put('/:id', tokenExtractor, userExtractor, async (req, res) => {
+blogsRouter.put('/:id', userExtractor, async (req, res) => {
   const blog = {
     title: req.body.title,
     author: req.body.author,
@@ -57,11 +57,13 @@ blogsRouter.put('/:id', tokenExtractor, userExtractor, async (req, res) => {
   return res.status(200).json(update);
 });
 
-blogsRouter.delete('/:id', tokenExtractor, userExtractor, async (req, res) => {
-  const targetBlog = await Blog.findById(req.params.id);
-  // console.log(targetBlog)
-  const targetUser = await User.findById(targetBlog.user.id);
-  const targetUserId = targetUser.id.toString();
+blogsRouter.delete('/:id', userExtractor, async (req, res) => {
+  const check = await Blog.findById(req.params.id);
+  if (!check) {
+    return res.status(404).end();
+  }
+  // console.log(req.user);
+  const targetUserId = req.user.id.toString();
   // console.log(`target ID ${targetUserId}`)
 
   const { user } = req;

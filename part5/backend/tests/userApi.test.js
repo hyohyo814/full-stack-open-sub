@@ -142,7 +142,6 @@ describe('Token based authentication', () => {
     await api.post('/api/users').send(userInfo);
     const login = await api.post('/api/login').send(userCreds);
     const { token } = login.body;
-    const badToken = `${login.body.token}asd`;
     // console.log(token);
 
     await api
@@ -163,16 +162,8 @@ describe('Token based authentication', () => {
       .expect(401)
       .expect({ error: 'jwt must be provided' });
 
-    /*
-    await api
-      .delete(`/api/blogs/${newEntryId}`)
-      .set('Authorization', `Bearer ${badToken}`)
-      .expect(401);
-      .expect({ error: 'invalid signature' });
-
     const failRes = await api.get('/api/blogs');
     expect(failRes.body).toHaveLength(initLength);
-    */
 
     await api
       .delete(`/api/blogs/${newEntryId}`)
