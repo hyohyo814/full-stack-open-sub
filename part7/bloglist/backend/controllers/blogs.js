@@ -36,25 +36,13 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
   }
 });
 
-blogsRouter.put('/:id', userExtractor, async (req, res) => {
-  const blog = {
-    title: req.body.title,
-    author: req.body.author,
-    url: req.body.url,
-    user: req.body.user,
-    likes: req.body.likes,
-  };
+blogsRouter.put('/:id', async (req, res) => {
+  const { title, url, author, likes } = req.body
 
-  const { user } = req;
-  blog.user = user.id;
-
-  if (!blog.title || !blog.url) {
-    return res.status(400).end();
-  }
-  const update = await Blog.findByIdAndUpdate(req.params.id, blog, {
+  const update = await Blog.findByIdAndUpdate(req.params.id, { title, url, author, likes }, {
     new: true,
   });
-  return res.status(200).json(update);
+  res.json(update);
 });
 
 blogsRouter.delete('/:id', userExtractor, async (req, res) => {

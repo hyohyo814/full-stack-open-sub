@@ -17,11 +17,13 @@ const errorHandler = (err, req, res, next) => {
 };
 
 const getTokenFrom = (req) => {
-  const auth = req.get('authorization');
-  if (auth && auth.startsWith('Bearer ')) {
-    return auth.substring(7);
+  const auth = req.get('Authorization')
+  console.log(`Authorization ${auth}`)
+  if (auth === undefined) {
+    return null;
   }
-  return null;
+  console.log(`substring ${auth.substring(7)}`)
+  return auth.substring(7);
 };
 
 const tokenExtractor = (req, res, next) => {
@@ -31,7 +33,7 @@ const tokenExtractor = (req, res, next) => {
 
 const userExtractor = async (req, res, next) => {
   const token = getTokenFrom(req);
-  // console.log(token);
+  console.log(`token: ${token}`);
   if (!token) {
     return res.status(401).json({ error: 'jwt must be provided' });
   }
