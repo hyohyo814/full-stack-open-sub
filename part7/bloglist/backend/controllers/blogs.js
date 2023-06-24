@@ -36,6 +36,14 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
   }
 });
 
+blogsRouter.post('/:id/comments', async (req, res) => {
+  const { comment } = req.body
+  const target = await Blog.findById(req.params.id)
+  target.comments = target.comments.concat(comment)
+  await target.save();
+  res.status(201).json(target)
+})
+
 blogsRouter.put('/:id', async (req, res) => {
   const { title, url, author, likes } = req.body
 
