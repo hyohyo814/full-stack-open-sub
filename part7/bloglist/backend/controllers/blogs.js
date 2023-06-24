@@ -28,12 +28,12 @@ blogsRouter.post('/', userExtractor, async (req, res) => {
 
   if (!blog.title || !blog.url) {
     res.status(400).end();
-  } else {
-    const savedBlog = await blog.save();
-    user.blogs = user.blogs.concat(savedBlog.id);
-    await user.save();
-    res.status(201).json(savedBlog);
   }
+  const savedBlog = await blog.save();
+  user.blogs = user.blogs.concat(savedBlog.id);
+  await user.save();
+  savedBlog = await Blog.findById(savedBlog.id).populate('user')
+  res.status(201).json(savedBlog);
 });
 
 blogsRouter.post('/:id/comments', async (req, res) => {
