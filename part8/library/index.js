@@ -170,6 +170,14 @@ const resolvers = {
   },
   Mutation: {
     addBook: (root, args) => {
+      if (books.find(b => b.title === args.title)) {
+        throw new GraphQLError(`${args.title} already in database`, {
+          extensions: {
+            code: 'BADE_USER_INPUT',
+            invalidArgs: args.title
+          }
+        })
+      }
       if (!authors.find(a => a.name === args.author)) {
         console.log('New author')
         const newAuthor = {
@@ -177,10 +185,11 @@ const resolvers = {
           id: uuid()
         }
         authors = authors.concat(newAuthor)
-        console.log(authors)
       }
       console.log('Existing author')
+      console.log(args)
       const book = { ...args, id: uuid() }
+      console.log(book)
       books = books.concat(book)
       return book
     },
@@ -189,6 +198,7 @@ const resolvers = {
       if (!author) {
         return null
       }
+      console.log(args)
 
       const updAuth = { ...author, born: args.setBornTo}
       authors = authors.map(a => a.name === args.name ? updAuth : a)
