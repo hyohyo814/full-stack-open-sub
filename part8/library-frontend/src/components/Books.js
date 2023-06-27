@@ -16,7 +16,7 @@ const Books = ({show}) => {
     <div>
       <h2>books</h2>
 
-      <table>
+      <table style={{width: "100%", textAlign: "left"}}>
         <tbody>
           <tr>
             <th></th>
@@ -26,7 +26,7 @@ const Books = ({show}) => {
           {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           ))}
