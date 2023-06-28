@@ -9,7 +9,7 @@ const NewBook = ({show}) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS}],
+    refetchQueries: [{ query: ALL_BOOKS }],
   })
 
   if (!show) {
@@ -19,9 +19,11 @@ const NewBook = ({show}) => {
   const submit = async (event) => {
     event.preventDefault()
     console.log('add book...')
+    const publishedNum = Number(published)
     addBook({ variables: {
-      title, author, published, genres
+      title, author, publishedNum, genres
     }})
+    
     setTitle('')
     setPublished('')
     setAuthor('')
@@ -36,6 +38,7 @@ const NewBook = ({show}) => {
 
   return (
     <div>
+      <h2>new book</h2>
       <form onSubmit={submit}>
         <div>
           title

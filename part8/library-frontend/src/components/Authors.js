@@ -2,7 +2,7 @@ import { useQuery, useMutation } from '@apollo/client'
 import { ALL_AUTHORS, EDIT_YEAR } from '../queries'
 import EditYear from './EditYear'
 
-const Authors = ({ show }) => {
+const Authors = ({ show, token }) => {
   const result = useQuery(ALL_AUTHORS)
 
   if (!show) {
@@ -33,7 +33,7 @@ const Authors = ({ show }) => {
           ))}
         </tbody>
       </table>
-      <EditYear authors={authors} />
+      {!token ? null : <EditYear authors={authors} />}
     </div>
   )
 }

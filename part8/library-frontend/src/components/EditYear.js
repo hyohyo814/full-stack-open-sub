@@ -59,7 +59,7 @@ const EditYear = ({ authors }) => {
           name
           <Select
             defaultValue={name}
-            onChange={setName}
+            onChange={target => setName(target.value)}
             options={nameSel}
           />
         </div>
