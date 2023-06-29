@@ -8,7 +8,7 @@ const Authors = ({ show, token }) => {
   if (!show) {
     return null
   }
-  if (result.loading) {
+  if (result.loading || !result.data) {
     return <div>loading authors...</div>
   }
 

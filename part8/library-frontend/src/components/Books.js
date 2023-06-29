@@ -7,8 +7,10 @@ const Books = ({ show }) => {
   const [genre, setGenre] = useState(null)
   const allRes = useQuery(ALL_BOOKS)
   const result = useQuery(ALL_BOOKS, {
-    variables: { genre },
+    variables: { genre }
   })
+
+  console.log(allRes.data)
 
   if (!show) {
     return null

@@ -18,10 +18,10 @@ const Recommend = ({ show }) => {
 
   useEffect(() => {
     if (user.data && user.data.me) {
+      console.log(user.data.me)
       setGenre(user.data.me.favoriteGenre)
-      allBooks.refetch({ genre: user.data.me.favoriteGenre})
     }
-  }, [user.data, allBooks])
+  }, [user.data])
   
 
   if (!show) {
