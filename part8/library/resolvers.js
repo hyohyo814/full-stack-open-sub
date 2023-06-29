@@ -20,7 +20,6 @@ const resolvers = {
       return res
     },
     allBooks: async (root, args) => {
-      console.log(args)
       if (!args.genre || args.genre === '') {
         const res = await Book.find({}).populate('author')
         return res
@@ -107,10 +106,8 @@ const resolvers = {
 
       try {
         const authorId = await Author.exists({ name: args.author })
-        console.log(authorId)
         if (authorId) {
-          const author = await Author.findOne({ _id: authorId})
-          console.log(author)
+          const author = await Author.findOne({ _id: authorId })
           book = new Book({ ...args, author: authorId })
           await book.save()
           author.bookCount = author.bookCount.concat(book._id)

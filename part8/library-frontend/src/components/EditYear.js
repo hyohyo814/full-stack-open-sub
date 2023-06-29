@@ -1,37 +1,16 @@
-import { useQuery, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useState } from 'react'
 import Select from 'react-select'
 import { EDIT_YEAR, ALL_AUTHORS } from '../queries'
 
-const Notification = ({ message }) => {
-  if (!message) {
-    return null
-  }
-
-  return (
-    <div
-      style={{
-        border: '1px solid',
-        marginTop: '10px',
-      }}>
-      {message}
-    </div>
-  )
-}
-
-const EditYear = ({ authors }) => {
-  const [errMsg, setErrMsg] = useState(null)
+const EditYear = ({ authors, setError }) => {
   const [name, setName] = useState(null)
   const [born, setBorn] = useState('')
 
   const [editAuthor] = useMutation(EDIT_YEAR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
     onError: (error) => {
-      const messages = error.graphQLErrors[0].message
-      setErrMsg(messages)
-      setTimeout(() => {
-        setErrMsg(null)
-      }, 5000)
+      setError( error.graphQLErrors[0].message)
     },
   })
 
@@ -74,7 +53,6 @@ const EditYear = ({ authors }) => {
         </div>
         <button type="submit">update author</button>
       </form>
-      <Notification message={errMsg} />
     </div>
   )
 }

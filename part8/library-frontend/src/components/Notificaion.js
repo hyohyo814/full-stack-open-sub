@@ -1,13 +1,8 @@
-
-
 const Notification = ({ errMsg }) => {
-  if (errMsg) {
-    return (
-      <div style={{padding: '10px', border: 'line'}}>
-        {errMsg}
-      </div>
-    )
+  if (!errMsg) {
+    return null
   }
+  return <div style={{ padding: '10px', border: '1px solid' }}>{errMsg}</div>
 }
 
 export default Notification

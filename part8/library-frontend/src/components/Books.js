@@ -1,16 +1,13 @@
 import { useQuery } from '@apollo/client'
-import { useState, useEffect } from 'react'
 import { ALL_BOOKS } from '../queries'
 import _ from 'lodash'
 
 const Books = ({ show }) => {
-  const [genre, setGenre] = useState(null)
+  let genre = null
   const allRes = useQuery(ALL_BOOKS)
   const result = useQuery(ALL_BOOKS, {
     variables: { genre }
   })
-
-  console.log(allRes.data)
 
   if (!show) {
     return null
@@ -28,11 +25,12 @@ const Books = ({ show }) => {
       <button
         key={f}
         value={f}
-        onClick={({ target }) => setGenre(target.value)}>
+        onClick={({ target }) => result.refetch({ genre: target.value})}>
         {f}
       </button>
     )
   })
+
 
   return (
     <div>
@@ -55,7 +53,7 @@ const Books = ({ show }) => {
         </tbody>
       </table>
       {filterList}
-      <button onClick={({ target }) => setGenre(null)}>all genres</button>
+      <button onClick={({target}) => result.refetch({genre: null})}>all genres</button>
     </div>
   )
 }

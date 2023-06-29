@@ -1,27 +1,20 @@
 import { useQuery } from '@apollo/client'
 import { useState, useEffect } from 'react'
-import { USER, ALL_BOOKS } from '../queries'
+import { ALL_BOOKS } from '../queries'
 
-const Recommend = ({ show }) => {
+const Recommend = ({ show, setError }) => {
   const [genre, setGenre] = useState(null)
-  const user = useQuery(USER, {
-    onError: (error) => {
-      console.log(error.graphQLErrors[0].message)
-    }
-  })
   const allBooks = useQuery(ALL_BOOKS, {
     variables: { genre },
     onError: (error) => {
-      console.log(error.graphQLErrors[0].message)
+      setError(error.graphQLErrors[0].message)
     }
   })
-
   useEffect(() => {
-    if (user.data && user.data.me) {
-      console.log(user.data.me)
-      setGenre(user.data.me.favoriteGenre)
-    }
-  }, [user.data])
+    const favGen = localStorage.getItem('favoriteGenre')
+    console.log(favGen)
+    setGenre(favGen)
+  }, [])
   
 
   if (!show) {

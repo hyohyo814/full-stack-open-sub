@@ -1,8 +1,8 @@
-import { useQuery, useMutation } from '@apollo/client'
-import { ALL_AUTHORS, EDIT_YEAR } from '../queries'
+import { useQuery } from '@apollo/client'
+import { ALL_AUTHORS } from '../queries'
 import EditYear from './EditYear'
 
-const Authors = ({ show, token }) => {
+const Authors = ({ show, token, setError }) => {
   const result = useQuery(ALL_AUTHORS)
 
   if (!show) {
@@ -33,7 +33,7 @@ const Authors = ({ show, token }) => {
           ))}
         </tbody>
       </table>
-      {!token ? null : <EditYear authors={authors} />}
+      {!token ? null : <EditYear authors={authors} setError={setError} />}
     </div>
   )
 }
