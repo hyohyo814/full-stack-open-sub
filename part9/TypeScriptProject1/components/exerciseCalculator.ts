@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 interface Result {
   periodLength: number;
@@ -19,7 +19,7 @@ const parseArguments = (args: string[]): Input => {
   if (args.length < 4) throw new Error('Not enough arguments');
   if (args.length > 4) throw new Error('Too many arguments');
   let stringFound = false;
-  let argsArr: number[] = [];
+  const argsArr: number[] = [];
   const form = args[2].replace('[', '').replace(']', '');
   _.forEach(form.split(','), (v) => {
     if (!isNaN(Number(v))) {
@@ -40,11 +40,11 @@ const parseArguments = (args: string[]): Input => {
 };
 
 const calculateExercises = (hours: number[], target: number): Result => {
-  let periodLength: number = 0;
-  let trainingDays: number = 0;
-  let rating: number = 0;
-  let ratingDescription: string = '';
-  let success: boolean = false;
+  let periodLength = 0;
+  let trainingDays = 0;
+  const rating = 0;
+  const ratingDescription = '';
+  const success = false;
   _.forEach(hours, (v) => {
     periodLength += 1;
     if (v !== 0) {
@@ -52,7 +52,7 @@ const calculateExercises = (hours: number[], target: number): Result => {
     }
   });
   const avgCalc = _.mean(hours).toFixed(1);
-  const average: number = Number(avgCalc);
+  const average = Number(avgCalc);
   const compare = average / target;
 
   let result = {
