@@ -1,0 +1,21 @@
+{
+  "name": "typescriptproject1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node",
+    "calculateBmi": "ts-node -- bmiCalculator.ts",
+    "exerciseCalculator": "ts-node -- exerciseCalculator.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.14.195",
+    "@types/node": "^20.3.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
