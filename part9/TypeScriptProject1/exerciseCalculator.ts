@@ -18,25 +18,26 @@ interface Input {
 const parseArguments = (args: string[]): Input => {
   if (args.length < 4) throw new Error('Not enough arguments');
   if (args.length > 4) throw new Error('Too many arguments');
-  let stringFound = false
-  let argsArr: number[] = []
-  const form = args[2].replace("[", "").replace("]", "")
-  _.forEach(form.split(","), v => {
+  let stringFound = false;
+  let argsArr: number[] = [];
+  const form = args[2].replace('[', '').replace(']', '');
+  _.forEach(form.split(','), (v) => {
     if (!isNaN(Number(v))) {
-      argsArr.push(Number(v))
-      return
+      argsArr.push(Number(v));
     } else {
-      stringFound = true
+      stringFound = true;
     }
-  })
+  });
 
   if (argsArr instanceof Array && !stringFound && !isNaN(Number(args[3]))) {
     return {
       hours: argsArr,
-      target: Number(args[3])
-    }
+      target: Number(args[3]),
+    };
+  } else {
+    throw new Error('Invalid arguments');
   }
-}
+};
 
 const calculateExercises = (hours: number[], target: number): Result => {
   let periodLength: number = 0;
@@ -69,8 +70,8 @@ const calculateExercises = (hours: number[], target: number): Result => {
         ...result,
         success: false,
         rating: 1,
-        ratingDescription: 'much more work needed to be done'
-      }
+        ratingDescription: 'much more work needed to be done',
+      };
       console.log(result);
       return result;
     case compare > 0.5 && compare < 1:
@@ -79,7 +80,7 @@ const calculateExercises = (hours: number[], target: number): Result => {
         success: false,
         rating: 2,
         ratingDescription: 'not too bad but could be better',
-      }
+      };
       console.log(result);
       return result;
     case compare >= 1:
@@ -87,21 +88,23 @@ const calculateExercises = (hours: number[], target: number): Result => {
         ...result,
         success: true,
         rating: 3,
-        ratingDescription: 'great work! target reached'
-      }
+        ratingDescription: 'great work! target reached',
+      };
       console.log(result);
       return result;
+    default:
+      throw new Error('Error occurred while checking results');
   }
 };
 
 try {
-  const { hours, target } = parseArguments(process.argv)
-  calculateExercises(hours, target)
+  const { hours, target } = parseArguments(process.argv);
+  calculateExercises(hours, target);
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened'
+  let errorMessage = 'Something bad happened';
   if (error instanceof Error) {
     errorMessage += ' Error: ' + error.message;
   }
-  console.log(errorMessage)
-  console.log('Arguments formatting: [...hours] target')
+  console.log(errorMessage);
+  console.log('Arguments formatting: [...hours] target');
 }

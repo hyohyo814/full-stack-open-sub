@@ -19,7 +19,6 @@ const parseArguments = (args: string[]): Measurements => {
 
 const calculateBmi = (height: number, weight: number) => {
   const heightInM = height / 100;
-  let category: string = null;
   const BMI = (weight / (heightInM * heightInM)).toFixed(1);
   const BMIn = Number(BMI);
   console.log(`BMI value: ${BMIn}`);
