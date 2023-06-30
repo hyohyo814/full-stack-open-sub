@@ -103,4 +103,5 @@ try {
     errorMessage += ' Error: ' + error.message;
   }
   console.log(errorMessage)
+  console.log('Arguments formatting: [...hours] target')
 }
