@@ -24,7 +24,7 @@ const parseString = (s: unknown): string => {
 const parseDate = (s: unknown): string => {
   const regex = new RegExp(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!isDate || !isString(s) || !s || !regex.test(s)) {
-    throw new Error('Invalid date input: ' + s);
+    throw new Error(`Invalid date input: ${s}. Format: YYYY-MM-DD`);
   }
   return s;
 };
@@ -32,14 +32,18 @@ const parseDate = (s: unknown): string => {
 const parseSsn = (s: unknown): string => {
   const regex = new RegExp(/^(\d{6})-(\w{3,4})$/);
   if (!s || !isString(s) || !regex.test(s)) {
-    throw new Error('Invalid SSN input: ' + s);
+    throw new Error(
+      `Invalid SSN input: ${s}. Format: 6 digits proceeded by 3-4 alphanumerics`
+    );
   }
   return s;
 };
 
 const parseGender = (s: unknown): Gender => {
   if (!s || !isString(s) || !isGender(s)) {
-    throw new Error('Invalid Gender input: ' + s);
+    throw new Error(
+      `Invalid Gender input: ${s}. Available options: male, female, other`
+    );
   }
   return s;
 };
