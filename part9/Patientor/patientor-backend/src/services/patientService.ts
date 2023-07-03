@@ -14,9 +14,18 @@ const getData = (): PatientNonSensitive[] => {
   }));
 };
 
+const getOne = (id: string): Patient => {
+  const result = patients.find(target => target.id === id);
+  if (result) {
+    return result;
+  }
+  throw new Error('Could not find patient with id ' + id);
+};
+
 const postData = ( entry: NewPatient ): Patient => {
   const newPatient = {
     id: uuidv4(),
+    entries: [],
     ...entry
   };
 
@@ -26,5 +35,6 @@ const postData = ( entry: NewPatient ): Patient => {
 
 export default {
   getData,
-  postData
+  postData,
+  getOne
 };
