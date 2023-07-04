@@ -1,6 +1,6 @@
 import express from 'express';
 import patientService from '../services/patientService';
-/*import patientDataParser from '../utils/patientDataParser';*/
+import patientDataParser from '../utils/patientDataParser';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.get('/:id', (req, res) => {
   res.send(patientService.getOne(req.params.id));
 });
 
-/*
+
 router.post('/', (req, res) => {
   try {
     const newPatient = patientDataParser(req.body);
@@ -27,6 +27,6 @@ router.post('/', (req, res) => {
     }
     res.status(400).send(errorMessage);
   }
-});*/
+});
 
 export default router;

@@ -108,7 +108,7 @@ const AcceptedPatientEntry = (obj: unknown): NewPatient => {
     'entries' in obj &&
     obj.entries instanceof Array
   ) {
-    console.log('BASE ENTRIES', obj.entries);
+    // console.log('BASE ENTRIES', obj.entries);
     const entriesArr: EntryWithoutId[] = [];
     obj.entries.map((v) => {
       switch (v.type) {
@@ -187,7 +187,6 @@ const AcceptedPatientEntry = (obj: unknown): NewPatient => {
           throw new Error('Invalid type ' + v.type);
       }
     });
-    console.log('entries', entriesArr);
     //}
     const newEntry: NewPatient = {
       name: parseString(obj.name),

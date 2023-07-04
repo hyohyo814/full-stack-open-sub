@@ -116,6 +116,9 @@ const data = [
 const patientsList: Patient[] = data.map((v) => {
   const complete = patientDataParser(v) as Patient;
   complete.id = v.id;
+  complete.entries.forEach((e, k) => {
+    e.id =v.entries[k].id;
+  });
   return complete;
 });
 

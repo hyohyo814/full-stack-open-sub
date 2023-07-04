@@ -82,6 +82,8 @@ export interface Patient {
   entries: Entry[];
 }
 
+export type NewPatientNoEntries = Omit<Patient, 'entries'>;
+
 export type NewPatient = Omit<ChangeFields<Patient, {entries: EntryWithoutId[]}>, 'id'>;
 
 export type PatientNonSensitive = Omit<Patient, 'ssn'>;
